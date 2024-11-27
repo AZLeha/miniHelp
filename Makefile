@@ -1,24 +1,24 @@
-# Устанавливаем переменную, которая будет использоваться для сборки версии библиотеки LibTest
+# Устанавливаем переменную, которая будет использоваться для сборки версии библиотеки LibLog
 LIB_VERSION := v0.1
 VERSION ?= $(shell git describe --abbrev=4 --tags --dirty --match "v*")
-LIB_SRC:=./LibTest/log.c 
-LIB_INC:=./LibTest/
+LIB_SRC:=./LibLog/log.c 
+LIB_INC:=./LibLog/
 LIB_OBJ:=$(LIB_SRC:.c=.o)
 
 # Цели для сборки различных частей проекта
 
-# Цель для сборки основного кода LibTest
+# Цель для сборки основного кода LibLog
 
 # Все цели вместе
 all: libLog version
-	g++ -o main.exe main.cpp -L ./build -l Log -I $(LIB_INC) -I ./build
+	g++ -o ./build/main.exe main.cpp -L ./build -l Log -I $(LIB_INC) -I ./build
 
 
 libLog: $(LIB_OBJ)
 	ar rcs ./build/libLog.a ./build/$(LIB_OBJ)
 
 .c.o: 
-	mkdir -p build/LibTest
+	mkdir -p build/libLog
 	gcc -c $< -o ./build/$@ -I $(LIB_INC)
 
 version: 

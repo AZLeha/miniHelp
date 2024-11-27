@@ -1,5 +1,5 @@
 ﻿cmake_minimum_required(VERSION 3.24)
-project(BuildSystems LANGUAGES CXX)
+project(miniHelp LANGUAGES CXX)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 #set(DYNANAMIC_ANALYZER ON)
