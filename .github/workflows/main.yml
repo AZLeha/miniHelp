@@ -1,0 +1,136 @@
+name: Build, Test and Release
+
+on:
+  push:
+    tags:
+      - 'v*' # Выполнять только при создании тегов вида vX.Y.Z
+  workflow_dispatch: # Ручной запуск
+
+jobs:
+  code-analyze: 
+    name: ${{ matrix.config.os }}-code-analyze
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {
+            os: macos-latest,
+          }
+
+    
+    steps:
+      - name: Fetch Sources
+        uses: actions/checkout@v3
+
+      - name: Install dependencies (Ubuntu)
+        if: startsWith(matrix.config.os, 'ubuntu')
+        shell: bash
+        run: |
+          sudo apt update
+          sudo apt install -y cmake gcc g++ cppcheck cxxtest
+
+      - name: Install dependencies (macOS)
+        if: startsWith(matrix.config.os, 'macos')
+        shell: bash
+        run: |
+          brew install cmake cppcheck cxxtest
+
+      - name: Configure CMake
+        run: cmake -B build -S .
+
+      - name: Run static analysis with cppcheck
+        run: |
+          cd build
+          cmake --build . --target cppcheck
+      
+  build: 
+    name: ${{ matrix.config.os }}-build
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {
+            os: ubuntu-latest
+          }
+          - {
+            os: macos-latest,
+          }
+    steps:
+      - name: Fetch Sources
+        uses: actions/checkout@v3
+
+      - name: Install dependencies (Ubuntu)
+        if: startsWith(matrix.config.os, 'ubuntu')
+        shell: bash
+        run: |
+          sudo apt update
+          sudo apt install -y cmake gcc g++ cppcheck cxxtest
+
+      - name: Install dependencies (macOS)
+        if: startsWith(matrix.config.os, 'macos')
+        shell: bash
+        run: |
+          brew install cmake cppcheck cxxtest
+
+      - name: Configure CMake
+        run: cmake -B build -S .
+
+      - name: Build project
+        run: cmake --build build
+    
+      - name: Upload artifacts (
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.config.os }}_build
+          path: ./build/out/
+
+  release:
+    needs: [code-analyze, build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Display structure of downloaded files
+        uses: actions/download-artifact@v4
+
+      - name: Create release archive
+        run: |
+          tar -czvf macOS_build.tar.gz macos-latest_build/
+          tar -czvf ubuntu_build.tar.gz ubuntu-latest_build/
+
+      - name: Display structure of downloaded files
+        run: ls -R 
+
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: |
+            Changes in this release
+            - Added new features
+          draft: true
+          prerelease: false
+
+      - name: Upload macOS artifact
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./macOS_build.tar.gz
+          asset_name: macOS_build.tar.gz
+          asset_content_type: application/gzip
+
+      - name: Upload Ubuntu artifact
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./ubuntu_build.tar.gz
+          asset_name: ubuntu_build.tar.gz
+          asset_content_type: application/gzip
