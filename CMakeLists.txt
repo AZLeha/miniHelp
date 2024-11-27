@@ -2,6 +2,14 @@
 project(BuildSystems LANGUAGES CXX)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+#set(DYNANAMIC_ANALYZER ON)
+
+if(DYNANAMIC_ANALYZER)
+    #Включаем AddressSanitizer
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -fno-omit-frame-pointer")
+endif()
+
+
 add_subdirectory (./LibLog)
 
 message(${CMAKE_SYSTEM_NAME})

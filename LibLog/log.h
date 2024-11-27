@@ -4,6 +4,8 @@
 #include <stdbool.h>
 #define LOG_VERSION 1
 
+
+
 typedef enum {
     LOG_EVENTS_OK = 0,
     LOG_PERF,
@@ -47,6 +49,7 @@ typedef struct {
 
 #define CONCAT_(x,y) x##y
 #define CONCAT(x,y) CONCAT_(x,y)
+
 #ifdef __cplusplus
 extern "C" {
 #endif
