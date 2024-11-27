@@ -1,4 +1,4 @@
-#include "log.h"
+﻿#include "log.h"
 #include <stdio.h>
 #include <sys/time.h>
 
@@ -6,7 +6,7 @@
 
 static const char LOG_LVL_c[] = {'A','E','W','I','D','V'};
 
-static LogMessageHeader_t logeHeader = {.prefix = LOG_PRFIX, .versinon = LOG_VERSION};
+static  LogMessageHeader_t logeHeader = {.prefix = LOG_PRFIX, .versinon = LOG_VERSION};
 
 static LogMessage_t message = {.header = &logeHeader, .payload = NULL};
 
@@ -18,7 +18,7 @@ void LOG_event(LOG_EVENTS_t event)
     logeHeader.crc = 0xAA;
     if(event == LOG_EVENTS_STR) return;
 
-    uint8_t *header = (uint8_t*)&logeHeader;
+    const uint8_t *header = (uint8_t*)&logeHeader;
     for(int i = 0; i<sizeof (LogMessageHeader_t); i++){
         printf("0x%.2X ", header[i]);
     }
@@ -32,7 +32,7 @@ void LOG_stringLog(const Loglocation_t *location, uint8_t logLevl, const char *d
     logeHeader.crc = 0xAA;
     logeHeader.payload_size = 0;
 
-    uint8_t *header = (uint8_t*)&logeHeader;
+    const uint8_t *header = (uint8_t*)&logeHeader;
     for(int i = 0; i<sizeof (LogMessageHeader_t); i++){
         printf("0x%.2X ", header[i]);
     }
@@ -46,7 +46,7 @@ void LOG_PerfLogPrint(const Loglocation_t *location, const char *code, int perfT
     logeHeader.crc = 0xAA;
     logeHeader.payload_size = 0;
 
-    uint8_t *header = (uint8_t*)&logeHeader;
+    const uint8_t *header = (uint8_t*)&logeHeader;
     for(int i = 0; i<sizeof (LogMessageHeader_t); i++){
         printf("0x%.2X ", header[i]);
     }

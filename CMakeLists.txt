@@ -1,6 +1,6 @@
 ﻿cmake_minimum_required(VERSION 3.24)
 project(BuildSystems LANGUAGES CXX)
-
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_subdirectory (./LibLog)
 
@@ -51,3 +51,23 @@ add_custom_target(
 
 include_directories(${CMAKE_BINARY_DIR}/version)
 add_dependencies(${CMAKE_PROJECT_NAME} version)
+
+
+find_program(CPPCHECK_EXECUTABLE NAMES cppcheck)
+
+if(CPPCHECK_EXECUTABLE)
+    add_custom_target(cppcheck
+        COMMAND ${CPPCHECK_EXECUTABLE}
+            --enable=all
+            --inconclusive
+            --suppress=missingIncludeSystem
+            --suppress=unusedFunction
+            --suppress=checkersReport
+            --checkers-report=${CMAKE_CURRENT_BINARY_DIR}/checkers_report.txt
+            --project=${CMAKE_BINARY_DIR}/compile_commands.json
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        COMMENT "Running cppcheck..."
+    )
+else()
+    message(WARNING "cppcheck not found! Install it to enable static code analysis.")
+endif()
