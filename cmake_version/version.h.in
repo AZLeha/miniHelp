@@ -1,0 +1,6 @@
+#ifndef TEST_VERSION_H_
+#define TEST_VERSION_H_
+
+    #define BUILD_SYSTEMS_VERSION "@TEST_VERSION@"
+
+#endif  /* TEST_VERSION_H_ */
