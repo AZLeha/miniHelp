@@ -6,7 +6,7 @@ class MyTestSuite : public CxxTest::TestSuite
 public:
     void testSum( void ) {
         TS_ASSERT( 1 + 1 > 1 );
-        TS_ASSERT_EQUALS(LOG_TestSum(3,7), 10);
+        TS_ASSERT_EQUALS(LOG_TestSum(3,6), 10);
     }
 
     void testTrue( void ) {

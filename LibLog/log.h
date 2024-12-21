@@ -10,8 +10,8 @@ typedef enum {
     LOG_EVENTS_OK = 0,
     LOG_PERF,
     LOG_EVENTS_STR,
-    LOG_EVENTS_EROR_CRC,
-    LOG_EVENTS_EROR_INIT_SERIALPORT
+    LOG_EVENTS_ERROR_CRC,
+    LOG_EVENTS_ERROR_INIT_SERIALPORT
 }LOG_EVENTS_t;
 
 #define  LOG_LVL_ASSERT     0
@@ -29,7 +29,7 @@ static int LOG_TestSum(int a, int b) {return a+b;}
 #pragma pack(push, 1)
 typedef struct {
     const uint16_t prefix;
-    const uint8_t versinon;
+    const uint8_t version;
     LOG_EVENTS_t event;
     uint16_t payload_size;
     uint8_t crc;
@@ -56,7 +56,7 @@ extern "C" {
 
 void LOG_event(LOG_EVENTS_t event);
 void LOG_PerfLogPrint(const Loglocation_t *location, const char *code, int perfTime);
-void LOG_stringLog(const Loglocation_t *location, uint8_t logLevl, const char *data);
+void LOG_stringLog(const Loglocation_t *location, uint8_t logLevel, const char *data);
 
 int getTickCount();
 

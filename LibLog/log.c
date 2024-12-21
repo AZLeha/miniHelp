@@ -2,11 +2,11 @@
 #include <stdio.h>
 #include <sys/time.h>
 
-#define LOG_PRFIX 0x0FAA
+#define LOG_PREFIX 0x0FAA
 
 static const char LOG_LVL_c[] = {'A','E','W','I','D','V'};
 
-static  LogMessageHeader_t logeHeader = {.prefix = LOG_PRFIX, .versinon = LOG_VERSION};
+static  LogMessageHeader_t logeHeader = {.prefix = LOG_PREFIX, .version = LOG_VERSION};
 
 static LogMessage_t message = {.header = &logeHeader, .payload = NULL};
 
@@ -26,7 +26,7 @@ void LOG_event(LOG_EVENTS_t event)
 }
 
 
-void LOG_stringLog(const Loglocation_t *location, uint8_t logLevl, const char *data)
+void LOG_stringLog(const Loglocation_t *location, uint8_t logLevel, const char *data)
 {
     message.header->event =LOG_EVENTS_STR;
     logeHeader.crc = 0xAA;
@@ -36,7 +36,7 @@ void LOG_stringLog(const Loglocation_t *location, uint8_t logLevl, const char *d
     for(int i = 0; i<sizeof (LogMessageHeader_t); i++){
         printf("0x%.2X ", header[i]);
     }
-    printf(" %c: %s %s %d (%s)\r\n",LOG_LVL_c[logLevl],location->file, location->func, location->line, data);
+    printf(" %c: %s %s %d (%s)\r\n",LOG_LVL_c[logLevel],location->file, location->func, location->line, data);
 }
 
 
